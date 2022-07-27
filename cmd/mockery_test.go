@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
 	"github.com/vektra/mockery/v2/pkg/config"
 )
 
@@ -24,6 +25,7 @@ func TestConfigEnvFlags(t *testing.T) {
 		Output:               "/some/dir",
 		Outpkg:               "some/package",
 		Packageprefix:        "prefix_",
+		FilePrefix:           "filepref_",
 		Dir:                  "dir/to/search",
 		Recursive:            true,
 		All:                  true,
@@ -53,6 +55,7 @@ func TestConfigEnvFlags(t *testing.T) {
 	env(t, "OUTPUT", expected.Output)
 	env(t, "OUTPKG", expected.Outpkg)
 	env(t, "PACKAGEPREFIX", expected.Packageprefix)
+	env(t, "FILEPREFIX", expected.FilePrefix)
 	env(t, "DIR", expected.Dir)
 	env(t, "RECURSIVE", fmt.Sprint(expected.Recursive))
 	env(t, "ALL", fmt.Sprint(expected.All))
