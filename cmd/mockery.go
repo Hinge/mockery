@@ -16,11 +16,12 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/tools/go/packages"
+
 	"github.com/vektra/mockery/v2/pkg"
 	"github.com/vektra/mockery/v2/pkg/config"
 	"github.com/vektra/mockery/v2/pkg/logging"
-	"golang.org/x/crypto/ssh/terminal"
-	"golang.org/x/tools/go/packages"
 )
 
 var (
@@ -52,6 +53,7 @@ func NewRootCmd() *cobra.Command {
 	pFlags.String("output", "./mocks", "directory to write mocks to")
 	pFlags.String("outpkg", "mocks", "name of generated package")
 	pFlags.String("packageprefix", "", "prefix for the generated package name, it is ignored if outpkg is also specified.")
+	pFlags.String("fileprefix", "", "prefix for the generated file name, it is ignored if filename is also specified, or if testonly is also specified, or if inpackage is also specified without keeptree.")
 	pFlags.String("dir", ".", "directory to search for interfaces")
 	pFlags.BoolP("recursive", "r", false, "recurse search into sub-directories")
 	pFlags.Bool("all", false, "generates mocks for all found interfaces in all sub-directories")
@@ -217,6 +219,7 @@ func (r *RootApp) Run() error {
 			KeepTree:                  r.Config.KeepTree,
 			KeepTreeOriginalDirectory: r.Config.Dir,
 			FileName:                  r.Config.FileName,
+			FilePrefix:                r.Config.FilePrefix,
 		}
 	}
 
