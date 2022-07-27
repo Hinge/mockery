@@ -16,11 +16,12 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/tools/go/packages"
+
 	"github.com/vektra/mockery/v2/pkg"
 	"github.com/vektra/mockery/v2/pkg/config"
 	"github.com/vektra/mockery/v2/pkg/logging"
-	"golang.org/x/crypto/ssh/terminal"
-	"golang.org/x/tools/go/packages"
 )
 
 var (
@@ -74,6 +75,7 @@ func NewRootCmd() *cobra.Command {
 	pFlags.Bool("unroll-variadic", true, "For functions with variadic arguments, do not unroll the arguments into the underlying testify call. Instead, pass variadic slice as-is.")
 	pFlags.Bool("exported", false, "Generates public mocks for private interfaces.")
 	pFlags.Bool("with-expecter", false, "Generate expecter utility around mock's On, Run and Return methods with explicit types. This option is NOT compatible with -unroll-variadic=false")
+	pFlags.StringSlice("file", nil, "file(s) to search for interfaces to generate mocks for, it is ignored if name or all is also specified")
 
 	viper.BindPFlags(pFlags)
 
@@ -190,8 +192,10 @@ func (r *RootApp) Run() error {
 	} else if r.Config.All {
 		recursive = true
 		filter = regexp.MustCompile(".*")
+	} else if len(r.Config.Files) > 0 {
+		recursive = false
 	} else {
-		log.Fatal().Msgf("Use --name to specify the name of the interface or --all for all interfaces found")
+		log.Fatal().Msgf("Use --name to specify the name of the interface, --file to specify the file(s) to search for interfaces, or --all for all interfaces found")
 	}
 
 	if r.Config.Profile != "" {
@@ -265,12 +269,13 @@ func (r *RootApp) Run() error {
 	}
 
 	walker := pkg.Walker{
-		Config:    r.Config,
-		BaseDir:   baseDir,
-		Recursive: recursive,
-		Filter:    filter,
-		LimitOne:  limitOne,
-		BuildTags: strings.Split(r.Config.BuildTags, " "),
+		Config:     r.Config,
+		BaseDir:    baseDir,
+		Recursive:  recursive,
+		Filter:     filter,
+		FileFilter: r.Config.Files,
+		LimitOne:   limitOne,
+		BuildTags:  strings.Split(r.Config.BuildTags, " "),
 	}
 
 	generated := walker.Walk(ctx, visitor)

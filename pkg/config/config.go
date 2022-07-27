@@ -27,9 +27,10 @@ type Config struct {
 	Config               string
 	Cpuprofile           string
 	Dir                  string
-	DisableVersionString bool `mapstructure:"disable-version-string"`
-	DryRun               bool `mapstructure:"dry-run"`
-	Exported             bool `mapstructure:"exported"`
+	DisableVersionString bool     `mapstructure:"disable-version-string"`
+	DryRun               bool     `mapstructure:"dry-run"`
+	Exported             bool     `mapstructure:"exported"`
+	Files                []string `mapstructure:"file"`
 	FileName             string
 	InPackage            bool
 	KeepTree             bool

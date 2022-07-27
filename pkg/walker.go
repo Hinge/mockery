@@ -17,11 +17,12 @@ import (
 
 type Walker struct {
 	config.Config
-	BaseDir   string
-	Recursive bool
-	Filter    *regexp.Regexp
-	LimitOne  bool
-	BuildTags []string
+	BaseDir    string
+	Recursive  bool
+	Filter     *regexp.Regexp
+	FileFilter []string
+	LimitOne   bool
+	BuildTags  []string
 }
 
 type WalkerVisitor interface {
@@ -80,6 +81,19 @@ func (w *Walker) doWalk(ctx context.Context, p *Parser, dir string, visitor Walk
 		}
 
 		path := filepath.Join(dir, file.Name())
+
+		if len(w.FileFilter) > 0 {
+			fileFilterMatch := false
+			for _, ff := range w.FileFilter {
+				if ff == path {
+					fileFilterMatch = true
+				}
+			}
+
+			if !fileFilterMatch {
+				continue
+			}
+		}
 
 		if file.IsDir() {
 			if w.Recursive {
