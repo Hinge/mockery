@@ -31,6 +31,7 @@ type Config struct {
 	DryRun               bool `mapstructure:"dry-run"`
 	Exported             bool `mapstructure:"exported"`
 	FileName             string
+	FilePrefix           string
 	InPackage            bool
 	KeepTree             bool
 	LogLevel             string `mapstructure:"log-level"`

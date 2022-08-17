@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/rs/zerolog"
+
 	"github.com/vektra/mockery/v2/pkg/config"
 	"github.com/vektra/mockery/v2/pkg/logging"
 )
@@ -35,6 +36,7 @@ type FileOutputStreamProvider struct {
 	KeepTree                  bool
 	KeepTreeOriginalDirectory string
 	FileName                  string
+	FilePrefix                string
 }
 
 func (p *FileOutputStreamProvider) GetWriter(ctx context.Context, iface *Interface) (io.Writer, error, Cleanup) {
@@ -93,7 +95,7 @@ func (p *FileOutputStreamProvider) filename(name string) string {
 	} else if p.TestOnly {
 		return name + "_test.go"
 	}
-	return name + ".go"
+	return p.FilePrefix + name + ".go"
 }
 
 // shamelessly taken from http://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-camel-caseo
